@@ -30,24 +30,29 @@ const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API });
 //   const markdown = req.flash("markdown")  
 //   res.json(markdown[0])
 // })
-app.post('/getdata',async (req, res) => {
-    const data = req.body
-    if (!data) res.status(400).json({message:"Repo link is missing "})
-    const url = data.repoLink
-    const splittedLink = url.split("/")
-    const owner = splittedLink[3]
-    const repoName = splittedLink[4]
-    const repo =await axios.get(`https://api.github.com/repos/${owner}/${repoName}`)
-    const repoContent = await axios.get(`https://api.github.com/repos/${owner}/${repoName}/contents`)
-    const markdown = await main(repo.data,repoContent.data)
-    res.json({markdown})
+app.post("/getdata", async (req, res) => {
+  try {
+    const { repoLink } = req.body;
+    if (!repoLink) {
+      return res.status(400).json({ message: "Repo link is missing" });
+    }
 
+    const splittedLink = repoLink.split("/");
+    const owner = splittedLink[3];
+    const repoName = splittedLink[4];
 
+    const repo = await axios.get(`https://api.github.com/repos/${owner}/${repoName}`);
+    const repoContent = await axios.get(`https://api.github.com/repos/${owner}/${repoName}/contents`);
 
-    // console.log(typeof(markdown))
-    // const html = marked.parse(markdown);
-    // res.render("preview",{markdown,html})
-})
+    const markdown = await main(repo.data, repoContent.data);
+    res.json({ markdown });
+
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ message: "Server error", error: err.message });
+  }
+});
+
 
 
 app.listen(port, () => {
