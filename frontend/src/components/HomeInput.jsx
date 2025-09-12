@@ -10,7 +10,7 @@ const HomeInput = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const res = await axios.post("https://byte-task-1-1.onrender.com/getdata", { repoLink: repoLink });
+      const res = await axios.post("https://byte-task-1-backend.vercel.app/getdata", { repoLink: repoLink });
       navigate("/preview", { state: { markdown: res.data.markdown } });
     } catch (err) {
       // console.log(err);
