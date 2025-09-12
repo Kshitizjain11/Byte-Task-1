@@ -8,11 +8,13 @@ import session from "express-session";
 import cors from "cors"
 
 const app = express()
-const port = 3000
-
 dotenv.config()
 
-app.use(cors())
+const port = process.env.PORT || 3000
+
+
+app.use(cors({ origin: "*" }));
+
 app.set("view engine", "ejs")
 app.use(express.urlencoded({extended:true}))
 app.use(express.json())
